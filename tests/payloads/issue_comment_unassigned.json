@@ -1,0 +1,49 @@
+{
+  "action": "created",
+  "issue": {
+    "url": "https://api.github.com/repos/user-foo/repo-bar/issues/14",
+    "labels_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14/labels{/name}",
+    "comments_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14/comments",
+    "events_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14/events",
+    "html_url": "https://github.com/user-foo/repo-bar/issues/14",
+    "id": 12345,
+    "number": 14,
+    "title": "testing assignee event",
+    "user": {
+      "login": "user-foo",
+      "id": 123123,
+      "type": "User",
+      "site_admin": false
+    },
+    "labels": [],
+    "state": "open",
+    "assignee": null,
+    "body": ""
+  },
+  "comment": {
+    "url": "https://api.github.com/repos/user-foo/repo-bar/issues/comments/111111",
+    "html_url": "https://github.com/user-foo/repo-bar/issues/14#issuecomment-111111",
+    "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14",
+    "id": 111111,
+    "user": {
+      "login": "user-foo",
+      "id": 123123,
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "Exciting! I want to claim this."
+  },
+  "repository": {
+    "id": 111,
+    "name": "repo-bar",
+    "full_name": "user-foo/repo-bar",
+    "owner": {
+      "login": "user-foo",
+      "id": 123123
+    }
+  },
+  "sender": {
+    "login": "user-foo",
+    "id": 123123
+  }
+}
