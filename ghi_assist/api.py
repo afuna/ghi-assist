@@ -32,7 +32,7 @@ class API(object):
         Assigns an issue to the given user.
 
         Args:
-            issue_url: API endpoint for this issue. Taken from previous API response.
+            issue_url: API endpoint for this issue.
             assignee: String with the user's login username.
         """
         self._call(issue_url, content={"assignee": assignee}, method="PATCH")
@@ -56,3 +56,14 @@ class API(object):
         """
         response = self._call(issue_url, method="GET")
         return response.json()
+
+    def replace_labels(self, issue_url=None, labels=None):
+        """
+        Replace issue labels.
+
+        Args:
+            issue_url: API endpoint for this issue. Taken from previous API response.
+            labels: list of labels to use.
+        """
+        if len(labels) > 0:
+            self._call("%s/labels" % issue_url, content=labels)

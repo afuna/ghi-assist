@@ -106,13 +106,15 @@ def test_payload(mockAPI):
     assert hook.should_perform_action(), "PR opened"
 
     actions = hook.actions()
-    assert actions[0]["args"]["related_issue_url"] == \
-        "https://api.github.com/repos/user-foo/repo-bar/issues/999"
-    assert actions[0]["args"]["assignee"] == "user-foo"
+    assert actions[0]["args"] == {
+        "related_issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
+        "assignee": "user-foo",
+    }
 
-    assert actions[1]["args"]["related_issue_url"] == \
-        "https://api.github.com/repos/user-foo/repo-bar/issues/999"
-    assert actions[1]["args"]["labels"] == []
+    assert actions[1]["args"] == {
+        "related_issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
+        "labels": [],
+    }
 
 def get_payload(input_filename):
     """Parse the JSON payload and return an object."""

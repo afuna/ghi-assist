@@ -1,13 +1,26 @@
 """
 Miscellaneous utility functions for labels.
 """
+import re
+
+LABEL_PATTERN = re.compile(r"""\#\#(?P<label>
+                                (?:
+                                    \w          # word character
+                                    |
+                                    [-]         # any non-word characters we accept
+                                    |
+                                    (?:
+                                        :[ ]    # colon followed by a space
+                                    )
+                                )+)
+                            """, re.VERBOSE)
 
 def filter_by_claimed(github_labels, claimed=False):
     """
-    Take a list of labels and toggle the 'status: claimed' label depending on claimed status.
+    Toggle the 'status: claimed' label depending on claimed status.
 
     Args:
-        github_labels: List of Github label objects
+        github_labels: List of Github labels as dicts (not strings)
         claimed: True if issue should be claimed; False if it shouldn't be
     Returns:
         A tuple of:
@@ -28,3 +41,32 @@ def filter_by_claimed(github_labels, claimed=False):
         replace = True
     results = sorted(list(labels_set))
     return (results, replace)
+
+def extract_labels(text, whitelist=None, aliases=None):
+    """
+    Extract potential labels from the text.
+
+    Args:
+        text: string to search for labels in the form of "##label" "##prefix: label".
+        whitelist (optional): a list of labels to accept.
+        aliases (optional): a dict of label aliases. Aliases can be used for long labels, or for
+            labels with spaces.
+    Returns:
+        List of label names in the order they appeared in the text.
+    """
+    if whitelist is None:
+        whitelist = []
+    if aliases is None:
+        aliases = {}
+
+    valid_labels = aliases.copy()
+    for label in whitelist:
+        valid_labels[label] = label
+
+    labels = []
+    matches = LABEL_PATTERN.findall(text)
+    for match in matches:
+        if match in valid_labels:
+            labels.append(valid_labels[match])
+
+    return labels

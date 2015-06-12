@@ -22,8 +22,8 @@ class ClaimHook(Hook):
         try:
             if self.payload["issue"]["assignee"] is None and self._claimed():
                 return True
-        except KeyError:
-            pass
+        except KeyError, err:
+            print err
 
         return False
 
