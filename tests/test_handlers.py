@@ -1,4 +1,4 @@
-from ghi_assist.handlers import Webhook
+from ghi_assist.webhook import Webhook
 
 def test_handlers(capsys):
     """ Test adding handlers. """
