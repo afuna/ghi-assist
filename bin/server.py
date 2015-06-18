@@ -10,6 +10,8 @@ app = Bottle()
 path = normpath(abspath(dirname(__file__)))
 with open(join(path, 'config.json')) as config_file:
     app.config.load_dict(byteify(json.load(config_file)))
+app.config.setdefault('server.host', 'localhost')
+app.config.setdefault('server.port', '8080')
 
 webhook = Webhook(secret=app.config["github.secret"], api_token=app.config["github.api_token"])
 webhook.register("ping", PingHook())
@@ -49,4 +51,4 @@ def github_webhook():
     pretty_responses = "\n".join([json.dumps(s, indent=4) for s in responses])
     return "Responded to %s.\n%s" % (event, pretty_responses)
 
-run(host='localhost', port=8080)
+run(host=app.config['server.host'], port=app.config['server.port'])
