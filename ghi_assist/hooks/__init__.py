@@ -1,0 +1,6 @@
+from ghi_assist.hooks.assign_related_hook import AssignRelatedHook
+from ghi_assist.hooks.claim_hook import ClaimHook
+from ghi_assist.hooks.comment_label_hook import CommentLabelHook
+from ghi_assist.hooks.new_issue_label_hook import NewIssueLabelHook
+from ghi_assist.hooks.new_pr_label_hook import NewPrLabelHook
+from ghi_assist.hooks.ping_hook import PingHook
