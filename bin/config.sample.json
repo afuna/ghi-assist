@@ -1,0 +1,20 @@
+{
+    "github": {
+        "secret": "testing"
+    },
+    "labels": {
+        "whitelist": [
+            "from: suggestions", "from: support",
+            "is: bug", "is: feature", "is: upkeep",
+            "curated: beginner", "curated: mostwanted"
+        ],
+        "aliases": [{
+            "effort: lower": "effort: (1) lower",
+            "effort: average": "effort: (2) average",
+            "effort: higher": "effort: (3) higher",
+            "severity: minor": "severity: (1) minor",
+            "severity: major": "severity: (2) major",
+            "severity: critical": "severity: (3) critical"
+        }]
+    }
+}

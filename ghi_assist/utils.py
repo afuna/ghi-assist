@@ -70,3 +70,17 @@ def extract_labels(text, whitelist=None, aliases=None):
             labels.append(valid_labels[match])
 
     return labels
+
+def byteify(input):
+    """
+    Hackety-hack to recursively convert unicode to str to work around load_dict only accepting str
+    keys. Hopefully to be removed with a future version of bottle.
+    """
+    if isinstance(input, dict):
+        return {byteify(key):byteify(value) for key,value in input.iteritems()}
+    elif isinstance(input, list):
+        return [byteify(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input
