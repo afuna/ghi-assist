@@ -46,6 +46,7 @@ def github_webhook():
 
     event = request.headers.get('X-GitHub-Event')
     responses = webhook.respond_to(event, request.json)
-    return "Responded to %s.\n%s" % (event, "\n".join(responses))
+    pretty_responses = "\n".join([json.dumps(s, indent=4) for s in responses])
+    return "Responded to %s.\n%s" % (event, pretty_responses)
 
 run(host='localhost', port=8080)
