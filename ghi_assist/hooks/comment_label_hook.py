@@ -12,7 +12,7 @@ class CommentLabelHook(Hook):
         self.aliases = aliases
         super(CommentLabelHook, self).__init__()
 
-    def should_perform_action(self, payload):
+    def should_perform_action(self, payload, api=None):
         """
         True if we detected labels.
         """
@@ -44,11 +44,10 @@ class CommentLabelHook(Hook):
 
         return False
 
-    def actions(self, payload):
+    def actions(self, payload, api):
         """
         List of actions.
         """
-        api = API()
         return [
             {"action": api.replace_labels,
              "args": {

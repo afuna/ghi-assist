@@ -5,10 +5,10 @@ def print_message(message=""):
     print message
 
 class PongOne(Hook):
-    def should_perform_action(self, payload):
+    def should_perform_action(self, payload, api=None):
         return True
 
-    def actions(self, payload):
+    def actions(self, payload, api):
         return [{
             "action": print_message,
             "args": {
@@ -17,10 +17,10 @@ class PongOne(Hook):
         }]
 
 class PongTwo(Hook):
-    def should_perform_action(self, payload):
+    def should_perform_action(self, payload, api=None):
         return True
 
-    def actions(self, payload):
+    def actions(self, payload, api):
         return [{
             "action": print_message,
             "args": {

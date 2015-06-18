@@ -10,7 +10,7 @@ class NewPrLabelHook(Hook):
         self.aliases = aliases
         super(NewPrLabelHook, self).__init__()
 
-    def should_perform_action(self, payload):
+    def should_perform_action(self, payload, api=None):
         """
         True if we detected labels.
         """
@@ -32,11 +32,10 @@ class NewPrLabelHook(Hook):
 
         return False
 
-    def actions(self, payload):
+    def actions(self, payload, api):
         """
         List of actions.
         """
-        api = API()
         return [
             {"action": api.replace_labels,
              "args": {

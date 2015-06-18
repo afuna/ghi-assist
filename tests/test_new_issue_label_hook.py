@@ -1,4 +1,5 @@
 from ghi_assist.hooks.new_issue_label_hook import NewIssueLabelHook
+from mock import Mock
 import json
 
 def test_no_labels():
@@ -14,7 +15,7 @@ def test_no_labels():
         },
     }
     assert hook.should_perform_action(payload), "No labels: mark as untriaged"
-    assert hook.actions(payload)[0]["args"]["labels"] == ["status: untriaged"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["status: untriaged"]
 
 def test_labels_assigned():
     """Test with new labels."""
@@ -29,7 +30,7 @@ def test_labels_assigned():
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload)[0]["args"]["labels"] == ["foo", "status: claimed"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo", "status: claimed"]
 
 def test_labels_unassigned():
     """Test with new labels."""
@@ -44,7 +45,7 @@ def test_labels_unassigned():
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo"]
 
 def test_invalid_action():
     """Test with action other than "opened"."""
@@ -67,7 +68,7 @@ def test_gh_labels_unassigned():
         }
     }
     assert hook.should_perform_action(payload), "Got labels"
-    assert hook.actions(payload)[0]["args"]["labels"] == ["bar", "baz", "status: claimed"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["bar", "baz", "status: claimed"]
 
 def test_gh_labels_assigned():
     """Test labelling using github's mechanism (not our adhoc parsing)."""
@@ -82,14 +83,14 @@ def test_gh_labels_assigned():
         }
     }
     assert hook.should_perform_action(payload), "Got labels"
-    assert hook.actions(payload)[0]["args"]["labels"] == ["bar", "baz"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["bar", "baz"]
 
 def test_payload():
     """Test using "real" payload."""
     hook = NewIssueLabelHook(whitelist=["foo"])
     payload = get_payload("new_issue_label.json")
     assert hook.should_perform_action(payload), "New issue with labels"
-    assert hook.actions(payload)[0]["args"] == {
+    assert hook.actions(payload, Mock())[0]["args"] == {
         "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/10",
         "labels": ["foo"],
     }

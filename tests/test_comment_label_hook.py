@@ -1,4 +1,5 @@
 from ghi_assist.hooks.comment_label_hook import CommentLabelHook
+from mock import Mock
 import json
 
 def test_no_labels():
@@ -28,7 +29,7 @@ def test_labels_assigned():
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload)[0]["args"]["labels"] == ["foo", "status: claimed"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo", "status: claimed"]
 
 def test_labels_unassigned():
     """Test with new labels."""
@@ -43,7 +44,7 @@ def test_labels_unassigned():
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo"]
 
 def test_existing_labels():
     """Test with existing labels."""
@@ -59,7 +60,7 @@ def test_existing_labels():
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload)[0]["args"]["labels"] == ["foo", "status: claimed"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo", "status: claimed"]
 
 def test_labels_pr():
     """Test with labels, but for a pull request."""
@@ -75,7 +76,7 @@ def test_labels_pr():
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo"]
 
 def test_payload():
     """Test using a 'real' payload."""
@@ -85,7 +86,7 @@ def test_payload():
     payload = get_payload('issue_comment_label.json')
     assert hook.should_perform_action(payload), "Issue comment with labels."
 
-    actions = hook.actions(payload)
+    actions = hook.actions(payload, Mock())
     assert actions[0]["args"] == {
         "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14",
         "labels": ["foo", "status: claimed"]

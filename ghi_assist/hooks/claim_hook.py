@@ -15,7 +15,7 @@ class ClaimHook(Hook):
         """
         return CLAIM_PATTERN.search(payload["comment"]["body"])
 
-    def should_perform_action(self, payload):
+    def should_perform_action(self, payload, api=None):
         """
         Checks whether we should claim this issue.
         """
@@ -27,11 +27,10 @@ class ClaimHook(Hook):
 
         return False
 
-    def actions(self, payload):
+    def actions(self, payload, api):
         """
         List of actions.
         """
-        api = API()
         return [
             {"action": api.assign_issue,
              "args": {

@@ -11,7 +11,7 @@ path = normpath(abspath(dirname(__file__)))
 with open(join(path, 'config.json')) as config_file:
     app.config.load_dict(byteify(json.load(config_file)))
 
-webhook = Webhook(secret=str(app.config["github.secret"]))
+webhook = Webhook(secret=app.config["github.secret"], api_token=app.config["github.api_token"])
 webhook.register("ping", PingHook())
 webhook.register("issue_comment", CommentLabelHook(
     whitelist=app.config["labels.whitelist"],

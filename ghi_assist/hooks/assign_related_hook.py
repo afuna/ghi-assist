@@ -26,7 +26,7 @@ class AssignRelatedHook(Hook):
         else:
             return None
 
-    def should_perform_action(self, payload):
+    def should_perform_action(self, payload, api=None):
         """
         Checks whether we want to assign a related issue.
         """
@@ -38,7 +38,6 @@ class AssignRelatedHook(Hook):
                     payload["repository"]["issues_url"])
 
                 # check if already assigned
-                api = API()
                 self.related_issue = api.issue(self.related_issue_url)
                 if self.related_issue["assignee"] is not None:
                     return False
@@ -49,11 +48,10 @@ class AssignRelatedHook(Hook):
 
         return False
 
-    def actions(self, payload):
+    def actions(self, payload, api=None):
         """
         List of actions.
         """
-        api = API()
         return [
             {"action": api.assign_issue,
              "args": {

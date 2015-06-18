@@ -1,6 +1,7 @@
 {
     "github": {
-        "secret": "testing"
+        "secret": "testing",
+        "api_token": "token for github account"
     },
     "labels": {
         "whitelist": [

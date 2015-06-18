@@ -3,11 +3,13 @@ Webhook for Github events.
 """
 import hmac
 from hashlib import sha1
+from ghi_assist.api import API
 
 class Webhook(object):
-    def __init__(self, secret=None):
+    def __init__(self, secret=None, api_token=None):
         self.handlers = {}
         self.secret = secret
+        self.api = API(api_token)
 
     def signature_valid(self, data=None, signed_data=None, digest=sha1):
         """
@@ -43,12 +45,12 @@ class Webhook(object):
         """
 
         if event not in self.handlers:
-            return
+            return []
 
         responses = []
         for hook in self.handlers[event]:
-            if hook.should_perform_action(payload):
-                for action in hook.actions(payload):
+            if hook.should_perform_action(payload, self.api):
+                for action in hook.actions(payload, self.api):
                     args = action.get("args") or {}
                     response = action["action"](**args)
                     if response is not None:

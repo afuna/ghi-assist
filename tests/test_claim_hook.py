@@ -1,4 +1,5 @@
 from ghi_assist.hooks.claim_hook import ClaimHook
+from mock import Mock
 import json
 
 def test_claim():
@@ -46,7 +47,7 @@ def test_claim_payload():
     payload = get_payload('issue_comment_unassigned.json')
     assert hook.should_perform_action(payload), "Unassigned + 'claimed'."
 
-    actions = hook.actions(payload)
+    actions = hook.actions(payload, Mock())
     assert actions[0]["args"] == {
         "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14",
         "assignee": "user-foo",
