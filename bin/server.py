@@ -15,16 +15,17 @@ webhook = Webhook(secret=app.config["github.secret"], api_token=app.config["gith
 webhook.register("ping", PingHook())
 webhook.register("issue_comment", CommentLabelHook(
     whitelist=app.config["labels.whitelist"],
-    aliases=app.config["labels.aliases"]
+    aliases=app.config["labels.aliases"][0] # hidden in an array to prevent the nesting from being used
+                                            # as namespace by load_dict
 ))
 webhook.register("issue_comment", ClaimHook())
 webhook.register("issues", NewIssueLabelHook(
     whitelist=app.config["labels.whitelist"],
-    aliases=app.config["labels.aliases"]
+    aliases=app.config["labels.aliases"][0]
 ))
 webhook.register("pull_request", NewPrLabelHook(
     whitelist=app.config["labels.whitelist"],
-    aliases=app.config["labels.aliases"]
+    aliases=app.config["labels.aliases"][0]
 ))
 webhook.register("pull_request", AssignRelatedHook())
 
