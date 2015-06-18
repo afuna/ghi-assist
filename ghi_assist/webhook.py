@@ -50,4 +50,7 @@ class Webhook(object):
             if hook.should_perform_action(payload):
                 for action in hook.actions(payload):
                     args = action.get("args") or {}
-                    action["action"](**args)
+                    response = action["action"](**args)
+                    if response is not None:
+                        responses.append(response)
+        return responses

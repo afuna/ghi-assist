@@ -25,7 +25,8 @@ class API(object):
             'User-Agent': self.useragent,
             'Authorization': "token %s" % self.token,
         }
-        return requests.request(method, api_url, headers=headers, data=json.dumps(content))
+        response = requests.request(method, api_url, headers=headers, data=json.dumps(content))
+        return response.json()
 
     def assign_issue(self, issue_url=None, assignee=None):
         """
@@ -35,7 +36,7 @@ class API(object):
             issue_url: API endpoint for this issue.
             assignee: String with the user's login username.
         """
-        self._call(issue_url, content={"assignee": assignee}, method="PATCH")
+        return self._call(issue_url, content={"assignee": assignee}, method="PATCH")
 
     def label_claimed(self, issue_url=None, labels=None):
         """
@@ -43,7 +44,7 @@ class API(object):
         """
         new_labels, replace = filter_by_claimed(labels, claimed=True)
         if replace:
-            self._call("%s/labels" % issue_url, content=new_labels)
+            return self._call("%s/labels" % issue_url, content=new_labels)
 
     def issue(self, issue_url=None):
         """
@@ -54,8 +55,7 @@ class API(object):
         Returns:
             The issue data as a dictionary.
         """
-        response = self._call(issue_url, method="GET")
-        return response.json()
+        return self._call(issue_url, method="GET")
 
     def replace_labels(self, issue_url=None, labels=None):
         """
@@ -66,4 +66,4 @@ class API(object):
             labels: list of labels to use.
         """
         if len(labels) > 0:
-            self._call("%s/labels" % issue_url, content=labels)
+            return self._call("%s/labels" % issue_url, content=labels)
