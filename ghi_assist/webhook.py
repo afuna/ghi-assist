@@ -24,7 +24,11 @@ class Webhook(object):
             False otherwise.
         """
         mac = hmac.new(self.secret, msg=data, digestmod=digest)
-        return hmac.compare_digest(mac.hexdigest(), signed_data)
+        try:
+            return hmac.compare_digest(mac.hexdigest(), signed_data)
+        except AttributeError:
+            # may leak information, but compare_digest does not exist in Python < 2.7.7
+            return mac.hexdigest() == signed_data
 
     def register(self, event, handler):
         """
