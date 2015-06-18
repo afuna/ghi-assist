@@ -6,18 +6,17 @@ class CommentLabelHook(Hook):
     """
     Hook to label an issue based on text from a new comment.
     """
-    def __init__(self, payload, whitelist=None, aliases=None):
+    def __init__(self, whitelist=None, aliases=None):
         self.labels = None
         self.whitelist = whitelist
         self.aliases = aliases
-        super(CommentLabelHook, self).__init__(payload)
+        super(CommentLabelHook, self).__init__()
 
-    def should_perform_action(self):
+    def should_perform_action(self, payload):
         """
         True if we detected labels.
         """
         try:
-            payload = self.payload
             labels = extract_labels(payload["comment"]["body"],
                                     whitelist=self.whitelist, aliases=self.aliases)
 
@@ -45,7 +44,7 @@ class CommentLabelHook(Hook):
 
         return False
 
-    def actions(self):
+    def actions(self, payload):
         """
         List of actions.
         """
@@ -54,7 +53,7 @@ class CommentLabelHook(Hook):
             {"action": api.replace_labels,
              "args": {
                  "labels": self.labels,
-                 "issue_url": self.payload["issue"]["url"],
+                 "issue_url": payload["issue"]["url"],
              },
             }
         ]

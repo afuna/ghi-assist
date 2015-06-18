@@ -9,29 +9,28 @@ class ClaimHook(Hook):
     """
     Hook to claim an issue based on comment text.
     """
-    def _claimed(self):
+    def _claimed(self, payload):
         """
         Checks whether the comment content tries to "claim" the issue.
         """
-        return CLAIM_PATTERN.search(self.payload["comment"]["body"])
+        return CLAIM_PATTERN.search(payload["comment"]["body"])
 
-    def should_perform_action(self):
+    def should_perform_action(self, payload):
         """
         Checks whether we should claim this issue.
         """
         try:
-            if self.payload["issue"]["assignee"] is None and self._claimed():
+            if payload["issue"]["assignee"] is None and self._claimed(payload):
                 return True
         except KeyError, err:
             print err
 
         return False
 
-    def actions(self):
+    def actions(self, payload):
         """
         List of actions.
         """
-        payload = self.payload
         api = API()
         return [
             {"action": api.assign_issue,

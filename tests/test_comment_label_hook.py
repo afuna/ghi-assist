@@ -3,7 +3,8 @@ import json
 
 def test_no_labels():
     """Test no labels to apply."""
-    hook = CommentLabelHook({
+    hook = CommentLabelHook()
+    payload = {
         "comment": {
             "body": "foo bar baz"
         },
@@ -11,12 +12,13 @@ def test_no_labels():
             "assignee": {},
             "url": "http://",
         },
-    })
-    assert not hook.should_perform_action(), "No labels"
+    }
+    assert not hook.should_perform_action(payload), "No labels"
 
 def test_labels_assigned():
     """Test with new labels."""
-    hook = CommentLabelHook({
+    hook = CommentLabelHook(whitelist=["foo"])
+    payload = {
         "comment": {
             "body": "##foo bar baz"
         },
@@ -24,13 +26,14 @@ def test_labels_assigned():
             "assignee": {},
             "url": "http://",
         },
-    }, whitelist=["foo"])
-    assert hook.should_perform_action(), "Got labels."
-    assert hook.actions()[0]["args"]["labels"] == ["foo", "status: claimed"]
+    }
+    assert hook.should_perform_action(payload), "Got labels."
+    assert hook.actions(payload)[0]["args"]["labels"] == ["foo", "status: claimed"]
 
 def test_labels_unassigned():
     """Test with new labels."""
-    hook = CommentLabelHook({
+    hook = CommentLabelHook(whitelist=["foo"])
+    payload = {
         "comment": {
             "body": "##foo bar baz"
         },
@@ -38,13 +41,14 @@ def test_labels_unassigned():
             "assignee": None,
             "url": "http://",
         },
-    }, whitelist=["foo"])
-    assert hook.should_perform_action(), "Got labels."
-    assert hook.actions()[0]["args"]["labels"] == ["foo"]
+    }
+    assert hook.should_perform_action(payload), "Got labels."
+    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
 
 def test_existing_labels():
     """Test with existing labels."""
-    hook = CommentLabelHook({
+    hook = CommentLabelHook(whitelist=["foo"])
+    payload = {
         "comment": {
             "body": "##foo bar baz"
         },
@@ -53,13 +57,14 @@ def test_existing_labels():
             "labels": [{"name": "existing"}],
             "url": "http://",
         },
-    }, whitelist=["foo"])
-    assert hook.should_perform_action(), "Got labels."
-    assert hook.actions()[0]["args"]["labels"] == ["foo", "status: claimed"]
+    }
+    assert hook.should_perform_action(payload), "Got labels."
+    assert hook.actions(payload)[0]["args"]["labels"] == ["foo", "status: claimed"]
 
 def test_labels_pr():
     """Test with labels, but for a pull request."""
-    hook = CommentLabelHook({
+    hook = CommentLabelHook(whitelist=["foo"])
+    payload = {
         "comment": {
             "body": "##foo bar baz"
         },
@@ -68,19 +73,19 @@ def test_labels_pr():
             "pull_request": {},
             "url": "http://",
         },
-    }, whitelist=["foo"])
-    assert hook.should_perform_action(), "Got labels."
-    assert hook.actions()[0]["args"]["labels"] == ["foo"]
+    }
+    assert hook.should_perform_action(payload), "Got labels."
+    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
 
 def test_payload():
     """Test using a 'real' payload."""
     hook = CommentLabelHook(
-        get_payload('issue_comment_label.json'),
         whitelist=["foo"]
     )
-    assert hook.should_perform_action(), "Issue comment with labels."
+    payload = get_payload('issue_comment_label.json')
+    assert hook.should_perform_action(payload), "Issue comment with labels."
 
-    actions = hook.actions()
+    actions = hook.actions(payload)
     assert actions[0]["args"] == {
         "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14",
         "labels": ["foo", "status: claimed"]

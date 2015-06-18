@@ -4,18 +4,17 @@ from ..utils import extract_labels
 
 class NewPrLabelHook(Hook):
     """Hook to label a pull request based on its text."""
-    def __init__(self, payload, whitelist=None, aliases=None):
+    def __init__(self, whitelist=None, aliases=None):
         self.labels = None
         self.whitelist = whitelist
         self.aliases = aliases
-        super(NewPrLabelHook, self).__init__(payload)
+        super(NewPrLabelHook, self).__init__()
 
-    def should_perform_action(self):
+    def should_perform_action(self, payload):
         """
         True if we detected labels.
         """
         try:
-            payload = self.payload
             if payload["action"] != "opened":
                 return False
 
@@ -33,7 +32,7 @@ class NewPrLabelHook(Hook):
 
         return False
 
-    def actions(self):
+    def actions(self, payload):
         """
         List of actions.
         """
@@ -42,7 +41,7 @@ class NewPrLabelHook(Hook):
             {"action": api.replace_labels,
              "args": {
                  "labels": self.labels,
-                 "issue_url": self.payload["pull_request"]["issue_url"],
+                 "issue_url": payload["pull_request"]["issue_url"],
              },
             }
         ]

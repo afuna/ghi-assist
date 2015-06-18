@@ -15,7 +15,8 @@ def mock_issue_response_payload(mockAPI):
 def test_assign_from_title(mockAPI):
     """Test successful assignment, getting information from title."""
     mock_issue_assignee(mockAPI)
-    hook = AssignRelatedHook({
+    hook = AssignRelatedHook()
+    payload = {
         "action": "opened",
         "pull_request": {
             "title": "[#123] Title",
@@ -24,16 +25,17 @@ def test_assign_from_title(mockAPI):
         "repository": {
             "issues_url": "https://api.github.com/repos/user-foo/repo-bar/issues{/number}"
         }
-    })
+    }
     assert hook.related_issue_id is None
-    assert hook.should_perform_action(), "Should assign"
+    assert hook.should_perform_action(payload), "Should assign"
     assert hook.related_issue_id == 123
 
 @patch('ghi_assist.hooks.assign_related_hook.API')
 def test_assign_from_body(mockAPI):
     """Test successful assignment, getting information from body."""
     mock_issue_assignee(mockAPI)
-    hook = AssignRelatedHook({
+    hook = AssignRelatedHook()
+    payload = {
         "action": "opened",
         "pull_request": {
             "title": "Title",
@@ -42,15 +44,16 @@ def test_assign_from_body(mockAPI):
         "repository": {
             "issues_url": "https://api.github.com/repos/user-foo/repo-bar/issues{/number}"
         }
-    })
-    assert hook.should_perform_action(), "Should assign"
+    }
+    assert hook.should_perform_action(payload), "Should assign"
     assert hook.related_issue_id == 456
 
 @patch('ghi_assist.hooks.assign_related_hook.API')
 def test_no_related(mockAPI):
     """Test no assignment, because we couldn't find a related issue."""
     mock_issue_assignee(mockAPI)
-    hook = AssignRelatedHook({
+    hook = AssignRelatedHook()
+    payload = {
         "action": "opened",
         "pull_request": {
             "title": "Title",
@@ -59,15 +62,16 @@ def test_no_related(mockAPI):
         "repository": {
             "issues_url": "https://api.github.com/repos/user-foo/repo-bar/issues{/number}"
         }
-    })
-    assert not hook.should_perform_action(), "No related issue"
+    }
+    assert not hook.should_perform_action(payload), "No related issue"
     assert hook.related_issue_id is None
 
 @patch('ghi_assist.hooks.assign_related_hook.API')
 def test_other_action(mockAPI):
     """Test no assignment, because we are doing something else to the pull request (e.g., closing)."""
     mock_issue_assignee(mockAPI)
-    hook = AssignRelatedHook({
+    hook = AssignRelatedHook()
+    payload = {
         "action": "closed",
         "pull_request": {
             "title": "[#123] Title",
@@ -76,15 +80,16 @@ def test_other_action(mockAPI):
         "repository": {
             "issues_url": "https://api.github.com/repos/user-foo/repo-bar/issues{/number}"
         }
-    })
-    assert not hook.should_perform_action(), "Not PR open"
+    }
+    assert not hook.should_perform_action(payload), "Not PR open"
     assert hook.related_issue_id is None
 
 @patch('ghi_assist.hooks.assign_related_hook.API')
 def test_related_issue_assigned(mockAPI):
     """Test no assignment because the related issue was already assigned."""
     mock_issue_assignee(mockAPI, assignee="someone-else")
-    hook = AssignRelatedHook({
+    hook = AssignRelatedHook()
+    payload = {
         "action": "opened",
         "pull_request": {
             "title": "[#123] Title",
@@ -93,8 +98,8 @@ def test_related_issue_assigned(mockAPI):
         "repository": {
             "issues_url": "https://api.github.com/repos/user-foo/repo-bar/issues{/number}"
         }
-    })
-    assert not hook.should_perform_action(), "Assigning related issue after checking"
+    }
+    assert not hook.should_perform_action(payload), "Assigning related issue after checking"
     assert hook.related_issue_id == 123
 
 @patch('ghi_assist.hooks.assign_related_hook.API')
@@ -102,10 +107,11 @@ def test_payload(mockAPI):
     """Test assigning using a full payload."""
     mock_issue_response_payload(mockAPI)
 
-    hook = AssignRelatedHook(get_payload('pr_opened.json'))
-    assert hook.should_perform_action(), "PR opened"
+    hook = AssignRelatedHook()
+    payload = get_payload('pr_opened.json')
+    assert hook.should_perform_action(payload), "PR opened"
 
-    actions = hook.actions()
+    actions = hook.actions(payload)
     assert actions[0]["args"] == {
         "related_issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
         "assignee": "user-foo",

@@ -9,33 +9,33 @@ class AssignRelatedHook(Hook):
     """
     Hook to assign an issue to the author of a pull request.
     """
-    def __init__(self, payload):
+    def __init__(self):
         self.related_issue_id = None
         self.related_issue_url = None
         self.related_issue = None
-        super(AssignRelatedHook, self).__init__(payload)
+        super(AssignRelatedHook, self).__init__()
 
-    def _related_issue_id(self):
+    def _related_issue_id(self, payload):
         """
         Looks for an issue id
         """
-        match = ISSUE_PATTERN.search(self.payload["pull_request"]["title"]) or \
-                ISSUE_PATTERN.search(self.payload["pull_request"]["body"])
+        match = ISSUE_PATTERN.search(payload["pull_request"]["title"]) or \
+                ISSUE_PATTERN.search(payload["pull_request"]["body"])
         if match:
             return match.group(1)
         else:
             return None
 
-    def should_perform_action(self):
+    def should_perform_action(self, payload):
         """
         Checks whether we want to assign a related issue.
         """
         try:
-            related_issue_id = self._related_issue_id()
-            if self.payload["action"] == "opened" and related_issue_id is not None:
+            related_issue_id = self._related_issue_id(payload)
+            if payload["action"] == "opened" and related_issue_id is not None:
                 self.related_issue_id = int(related_issue_id)
                 self.related_issue_url = ISSUE_URL_PATTERN.sub("/%s" % related_issue_id, \
-                    self.payload["repository"]["issues_url"])
+                    payload["repository"]["issues_url"])
 
                 # check if already assigned
                 api = API()
@@ -49,11 +49,10 @@ class AssignRelatedHook(Hook):
 
         return False
 
-    def actions(self):
+    def actions(self, payload):
         """
         List of actions.
         """
-        payload = self.payload
         api = API()
         return [
             {"action": api.assign_issue,

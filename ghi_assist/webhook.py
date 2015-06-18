@@ -34,7 +34,7 @@ class Webhook(object):
         handlers = self.handlers.setdefault(event, [])
         handlers.append(handler)
 
-    def respond_to(self, event):
+    def respond_to(self, event, payload):
         """
         Run all handlers for an event.
 
@@ -45,5 +45,9 @@ class Webhook(object):
         if event not in self.handlers:
             return
 
-        for func in self.handlers[event]:
-            func()
+        responses = []
+        for hook in self.handlers[event]:
+            if hook.should_perform_action(payload):
+                for action in hook.actions(payload):
+                    args = action.get("args") or {}
+                    action["action"](**args)

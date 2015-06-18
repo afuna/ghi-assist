@@ -3,7 +3,8 @@ import json
 
 def test_no_labels():
     """Test no labels to apply."""
-    hook = NewPrLabelHook({
+    hook = NewPrLabelHook()
+    payload = {
         "action": "opened",
         "issue": {
             "assignee": None,
@@ -13,13 +14,14 @@ def test_no_labels():
             "body": "foo bar baz",
             "issue_url": "http://",
         }
-    })
-    assert hook.should_perform_action(), "No labels: mark as untriaged"
-    assert hook.actions()[0]["args"]["labels"] == ["status: untriaged"]
+    }
+    assert hook.should_perform_action(payload), "No labels: mark as untriaged"
+    assert hook.actions(payload)[0]["args"]["labels"] == ["status: untriaged"]
 
 def test_labels_assigned():
     """Test with new labels."""
-    hook = NewPrLabelHook({
+    hook = NewPrLabelHook(whitelist=["foo"])
+    payload = {
         "action": "opened",
         "issue": {
             "assignee": {},
@@ -29,13 +31,14 @@ def test_labels_assigned():
             "body": "##foo bar baz",
             "issue_url": "http://",
         }
-    }, whitelist=["foo"])
-    assert hook.should_perform_action(), "Got labels."
-    assert hook.actions()[0]["args"]["labels"] == ["foo"]
+    }
+    assert hook.should_perform_action(payload), "Got labels."
+    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
 
 def test_labels_unassigned():
     """Test with new labels."""
-    hook = NewPrLabelHook({
+    hook = NewPrLabelHook(whitelist=["foo"])
+    payload = {
         "action": "opened",
         "issue": {
             "assignee": None,
@@ -45,22 +48,24 @@ def test_labels_unassigned():
             "body": "##foo bar baz",
             "issue_url": "http://",
         }
-    }, whitelist=["foo"])
-    assert hook.should_perform_action(), "Got labels."
-    assert hook.actions()[0]["args"]["labels"] == ["foo"]
+    }
+    assert hook.should_perform_action(payload), "Got labels."
+    assert hook.actions(payload)[0]["args"]["labels"] == ["foo"]
 
 def test_invalid_action():
     """Test with action other than "opened"."""
-    hook = NewPrLabelHook({
+    hook = NewPrLabelHook()
+    payload = {
         "action": "closed"
-    })
-    assert not hook.should_perform_action(), "Not newly opened."
+    }
+    assert not hook.should_perform_action(payload), "Not newly opened."
 
 def test_payload():
     """Test using "real" payload."""
-    hook = NewPrLabelHook(get_payload("new_pr_label.json"), whitelist=["foo"])
-    assert hook.should_perform_action(), "New PR with labels"
-    assert hook.actions()[0]["args"] == {
+    hook = NewPrLabelHook(whitelist=["foo"])
+    payload = get_payload("new_pr_label.json")
+    assert hook.should_perform_action(payload), "New PR with labels"
+    assert hook.actions(payload)[0]["args"] == {
         "labels": ["foo"],
         "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/11",
     }

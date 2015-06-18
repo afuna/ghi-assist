@@ -4,18 +4,17 @@ from ..utils import extract_labels
 
 class NewIssueLabelHook(Hook):
     """Hook to label an issue based on its text."""
-    def __init__(self, payload, whitelist=None, aliases=None):
+    def __init__(self, whitelist=None, aliases=None):
         self.labels = None
         self.whitelist = whitelist
         self.aliases = aliases
-        super(NewIssueLabelHook, self).__init__(payload)
+        super(NewIssueLabelHook, self).__init__()
 
-    def should_perform_action(self):
+    def should_perform_action(self, payload):
         """
         True if we detected labels.
         """
         try:
-            payload = self.payload
             if payload["action"] != "opened":
                 return False
 
@@ -37,7 +36,7 @@ class NewIssueLabelHook(Hook):
 
         return False
 
-    def actions(self):
+    def actions(self, payload):
         """
         List of actions.
         """
@@ -46,7 +45,7 @@ class NewIssueLabelHook(Hook):
             {"action": api.replace_labels,
              "args": {
                  "labels": self.labels,
-                 "issue_url": self.payload["issue"]["url"],
+                 "issue_url": payload["issue"]["url"],
              },
             }
         ]

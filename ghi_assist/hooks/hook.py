@@ -4,10 +4,7 @@ class Hook(object):
 
     Subclasses must implement should_perform_action and perform_action.
     """
-    def __init__(self, payload):
-        self.payload = payload
-
-    def should_perform_action(self):
+    def should_perform_action(self, payload):
         """
         Checks the payload to determine if we should perform the action or not.
 
@@ -16,7 +13,7 @@ class Hook(object):
         """
         raise NotImplementedError
 
-    def actions(self):
+    def actions(self, payload):
         """
         A list of actions that we want to perform for this hook.
 
