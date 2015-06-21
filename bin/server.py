@@ -8,7 +8,7 @@ from ghi_assist.hooks import AssignRelatedHook, ClaimHook, CommentLabelHook, New
 
 app = Bottle()
 path = normpath(abspath(dirname(__file__)))
-with open(join(path, 'config.json')) as config_file:
+with open(join(path, '../etc', 'config.json')) as config_file:
     app.config.load_dict(byteify(json.load(config_file)))
 app.config.setdefault('server.host', 'localhost')
 app.config.setdefault('server.port', '8080')
