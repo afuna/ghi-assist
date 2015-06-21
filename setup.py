@@ -1,7 +1,4 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 
 config = {
     'description': ' Bot that organizes Github Issues',
@@ -9,8 +6,8 @@ config = {
     'author_email': 'fu@dreamwidth.org.',
     'url': 'https://github.com/afuna/ghi-assist',
     'version': '0.1',
-    'packages': ['ghi_assist'],
-    'scripts': [],
+    'packages': find_packages(),
+    'scripts': ['bin/server.py'],
     'name': 'GHI Assist'
 }
 
