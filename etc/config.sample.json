@@ -17,5 +17,9 @@
             "severity: major": "severity: (2) major",
             "severity: critical": "severity: (3) critical"
         }]
+    },
+    "server": {
+        "host": "localhost",
+        "port": "8080"
     }
 }
