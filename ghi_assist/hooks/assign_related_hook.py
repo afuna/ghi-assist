@@ -55,13 +55,13 @@ class AssignRelatedHook(Hook):
         return [
             {"action": api.assign_issue,
              "args": {
-                 "related_issue_url": self.related_issue_url,
+                 "issue_url": self.related_issue_url,
                  "assignee": payload["sender"]["login"]
              },
             },
             {"action": api.label_claimed,
              "args": {
-                 "related_issue_url": self.related_issue_url,
+                 "issue_url": self.related_issue_url,
                  "labels": self.related_issue["labels"]
              },
             },
