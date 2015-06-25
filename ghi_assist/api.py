@@ -57,6 +57,18 @@ class API(object):
         """
         return self._call(issue_url, method="GET")
 
+    def add_labels(self, issue_url, labels=None):
+        """
+        Add issue labels (while keeping existing ones).
+
+        Args:
+            issue_url: API endpoint for this issue.
+            labels: list of labels to add.
+        """
+        if len(labels) > 0:
+            return self._call("%s/labels" % issue_url, content=labels, method="POST")
+
+
     def replace_labels(self, issue_url=None, labels=None):
         """
         Replace issue labels.

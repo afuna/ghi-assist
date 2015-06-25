@@ -5,3 +5,4 @@ from ghi_assist.hooks.comment_label_hook import CommentLabelHook
 from ghi_assist.hooks.new_issue_label_hook import NewIssueLabelHook
 from ghi_assist.hooks.new_pr_label_hook import NewPrLabelHook
 from ghi_assist.hooks.ping_hook import PingHook
+from ghi_assist.hooks.url_label_hook import UrlLabelHook

@@ -4,7 +4,7 @@ from os.path import normpath, dirname, abspath, join
 from ghi_assist.utils import byteify
 from ghi_assist.webhook import Webhook
 from ghi_assist.hooks import AssignRelatedHook, ClaimHook, CommentLabelHook, NewIssueLabelHook, \
-    NewPrLabelHook, PingHook, AssignedLabelHook
+    NewPrLabelHook, PingHook, AssignedLabelHook, UrlLabelHook
 
 app = Bottle()
 path = normpath(abspath(dirname(__file__)))
@@ -27,6 +27,8 @@ webhook.register("issue_comment", CommentLabelHook(
                                             # as namespace by load_dict
 ))
 webhook.register("issue_comment", ClaimHook())
+webhook.register("issue_comment", UrlLabelHook(r"https?://www\.dreamwidth\.org/support/see_request\?id=\d+", ["from: support"]))
+webhook.register("issues", UrlLabelHook(r"https?://www\.dreamwidth\.org/support/see_request\?id=\d+", ["from: support"]))
 webhook.register("issues", NewIssueLabelHook(
     whitelist=labels,
     aliases=app.config.get("labels.aliases")[0]
