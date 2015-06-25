@@ -25,6 +25,7 @@ webhook.register("issues", NewIssueLabelHook(
     whitelist=app.config["labels.whitelist"],
     aliases=app.config["labels.aliases"][0]
 ))
+webhook.register("issues", AssignedLabelHook())
 webhook.register("pull_request", NewPrLabelHook(
     whitelist=app.config["labels.whitelist"],
     aliases=app.config["labels.aliases"][0]
