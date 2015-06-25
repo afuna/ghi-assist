@@ -8,7 +8,6 @@ def test_no_labels():
     payload = {
         "action": "opened",
         "issue": {
-            "assignee": None,
             "labels": [],
         },
         "pull_request": {
@@ -19,30 +18,12 @@ def test_no_labels():
     assert hook.should_perform_action(payload), "No labels: mark as untriaged"
     assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["status: untriaged"]
 
-def test_labels_assigned():
+def test_labels_from_comments():
     """Test with new labels."""
     hook = NewPrLabelHook(whitelist=["foo"])
     payload = {
         "action": "opened",
         "issue": {
-            "assignee": {},
-            "labels": [],
-        },
-        "pull_request": {
-            "body": "##foo bar baz",
-            "issue_url": "http://",
-        }
-    }
-    assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo"]
-
-def test_labels_unassigned():
-    """Test with new labels."""
-    hook = NewPrLabelHook(whitelist=["foo"])
-    payload = {
-        "action": "opened",
-        "issue": {
-            "assignee": None,
             "labels": [],
         },
         "pull_request": {

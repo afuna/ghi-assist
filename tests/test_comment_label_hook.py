@@ -16,7 +16,7 @@ def test_no_labels():
     }
     assert not hook.should_perform_action(payload), "No labels"
 
-def test_labels_assigned():
+def test_labels_from_comment():
     """Test with new labels."""
     hook = CommentLabelHook(whitelist=["foo"])
     payload = {
@@ -24,22 +24,6 @@ def test_labels_assigned():
             "body": "##foo bar baz"
         },
         "issue": {
-            "assignee": {},
-            "url": "http://",
-        },
-    }
-    assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo", "status: claimed"]
-
-def test_labels_unassigned():
-    """Test with new labels."""
-    hook = CommentLabelHook(whitelist=["foo"])
-    payload = {
-        "comment": {
-            "body": "##foo bar baz"
-        },
-        "issue": {
-            "assignee": None,
             "url": "http://",
         },
     }
@@ -54,13 +38,12 @@ def test_existing_labels():
             "body": "##foo bar baz"
         },
         "issue": {
-            "assignee": {},
             "labels": [{"name": "existing"}],
             "url": "http://",
         },
     }
     assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo", "status: claimed"]
+    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo"]
 
 def test_labels_pr():
     """Test with labels, but for a pull request."""
@@ -70,7 +53,6 @@ def test_labels_pr():
             "body": "##foo bar baz"
         },
         "issue": {
-            "assignee": {},
             "pull_request": {},
             "url": "http://",
         },
@@ -89,7 +71,7 @@ def test_payload():
     actions = hook.actions(payload, Mock())
     assert actions[0]["args"] == {
         "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/14",
-        "labels": ["foo", "status: claimed"]
+        "labels": ["foo"]
     }
 
 def get_payload(input_filename):

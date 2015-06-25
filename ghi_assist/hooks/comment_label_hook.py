@@ -19,24 +19,7 @@ class CommentLabelHook(Hook):
         try:
             labels = extract_labels(payload["comment"]["body"],
                                     whitelist=self.whitelist, aliases=self.aliases)
-
-            force_replace, updated_status = False, False
             if len(labels) > 0:
-                force_replace = True
-
-            # update claimed status only if comment is to an issue (not PR)
-            if "pull_request" not in payload["issue"]:
-                if len(labels) == 0:
-                    labels = payload["issue"]["labels"]
-                else:
-                    labels = [{"name": label} for label in labels]
-
-                labels, updated_status = filter_by_claimed(
-                    labels,
-                    claimed=payload["issue"]["assignee"] is not None
-                )
-
-            if len(labels) > 0 and (force_replace or updated_status):
                 self.labels = labels
                 return True
         except KeyError, err:

@@ -9,7 +9,6 @@ def test_no_labels():
         "action": "opened",
         "issue": {
             "body": "foo bar baz",
-            "assignee": None,
             "labels": [],
             "url": "http://",
         },
@@ -17,29 +16,13 @@ def test_no_labels():
     assert hook.should_perform_action(payload), "No labels: mark as untriaged"
     assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["status: untriaged"]
 
-def test_labels_assigned():
+def test_labels_from_comment():
     """Test with new labels."""
     hook = NewIssueLabelHook(whitelist=["foo"])
     payload = {
         "action": "opened",
         "issue": {
             "body": "##foo bar baz",
-            "assignee": {},
-            "labels": [],
-            "url": "http://",
-        },
-    }
-    assert hook.should_perform_action(payload), "Got labels."
-    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["foo", "status: claimed"]
-
-def test_labels_unassigned():
-    """Test with new labels."""
-    hook = NewIssueLabelHook(whitelist=["foo"])
-    payload = {
-        "action": "opened",
-        "issue": {
-            "body": "##foo bar baz",
-            "assignee": None,
             "labels": [],
             "url": "http://",
         },
@@ -55,29 +38,13 @@ def test_invalid_action():
     }
     assert not hook.should_perform_action(payload), "Not newly opened."
 
-def test_gh_labels_unassigned():
+def test_gh_labels():
     """Test labelling using github's mechanism (not our adhoc parsing)."""
     hook = NewIssueLabelHook()
     payload = {
         "action": "opened",
         "issue": {
             "body": "some description",
-            "assignee": {},
-            "labels": ["bar", "baz"],
-            "url": "http://",
-        }
-    }
-    assert hook.should_perform_action(payload), "Got labels"
-    assert hook.actions(payload, Mock())[0]["args"]["labels"] == ["bar", "baz", "status: claimed"]
-
-def test_gh_labels_assigned():
-    """Test labelling using github's mechanism (not our adhoc parsing)."""
-    hook = NewIssueLabelHook()
-    payload = {
-        "action": "opened",
-        "issue": {
-            "body": "some description",
-            "assignee": None,
             "labels": ["bar", "baz"],
             "url": "http://",
         }

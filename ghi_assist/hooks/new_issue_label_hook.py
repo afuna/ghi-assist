@@ -25,8 +25,6 @@ class NewIssueLabelHook(Hook):
                                         aliases=self.aliases)
             if len(labels) == 0:
                 labels.append("status: untriaged")
-            if payload["issue"]["assignee"] is not None:
-                labels.append("status: claimed")
 
             if len(labels) > 0:
                 self.labels = labels
