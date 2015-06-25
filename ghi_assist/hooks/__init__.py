@@ -1,3 +1,4 @@
+from ghi_assist.hooks.assigned_label_hook import AssignedLabelHook
 from ghi_assist.hooks.assign_related_hook import AssignRelatedHook
 from ghi_assist.hooks.claim_hook import ClaimHook
 from ghi_assist.hooks.comment_label_hook import CommentLabelHook

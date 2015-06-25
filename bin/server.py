@@ -4,7 +4,7 @@ from os.path import normpath, dirname, abspath, join
 from ghi_assist.utils import byteify
 from ghi_assist.webhook import Webhook
 from ghi_assist.hooks import AssignRelatedHook, ClaimHook, CommentLabelHook, NewIssueLabelHook, \
-    NewPrLabelHook, PingHook
+    NewPrLabelHook, PingHook, AssignedLabelHook
 
 app = Bottle()
 path = normpath(abspath(dirname(__file__)))
