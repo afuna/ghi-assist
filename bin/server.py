@@ -13,22 +13,28 @@ with open(join(path, '../etc', 'config.json')) as config_file:
 app.config.setdefault('server.host', 'localhost')
 app.config.setdefault('server.port', '8080')
 
-webhook = Webhook(secret=app.config["github.secret"], api_token=app.config["github.api_token"])
+webhook = Webhook(secret=app.config.get("github.secret"), api_token=app.config.get("github.api_token"))
+
+if app.config.get("labels.autoload"):
+    labels = webhook.load_repo_labels(app.config.get("github.repository"))
+else:
+    labels = app.config.get("labels.whitelist")
+
 webhook.register("ping", PingHook())
 webhook.register("issue_comment", CommentLabelHook(
-    whitelist=app.config["labels.whitelist"],
-    aliases=app.config["labels.aliases"][0] # hidden in an array to prevent the nesting from being used
+    whitelist=labels,
+    aliases=app.config.get("labels.aliases")[0] # hidden in an array to prevent the nesting from being used
                                             # as namespace by load_dict
 ))
 webhook.register("issue_comment", ClaimHook())
 webhook.register("issues", NewIssueLabelHook(
-    whitelist=app.config["labels.whitelist"],
-    aliases=app.config["labels.aliases"][0]
+    whitelist=labels,
+    aliases=app.config.get("labels.aliases")[0]
 ))
 webhook.register("issues", AssignedLabelHook())
 webhook.register("pull_request", NewPrLabelHook(
-    whitelist=app.config["labels.whitelist"],
-    aliases=app.config["labels.aliases"][0]
+    whitelist=labels,
+    aliases=app.config.get("labels.aliases")[0]
 ))
 webhook.register("pull_request", AssignRelatedHook())
 
@@ -52,4 +58,4 @@ def github_webhook():
     pretty_responses = "\n".join([json.dumps(s, indent=4) for s in responses])
     return "Responded to %s.\n%s" % (event, pretty_responses)
 
-run(host=app.config['server.host'], port=app.config['server.port'])
+run(host=app.config.get('server.host'), port=app.config.get('server.port'))

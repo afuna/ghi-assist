@@ -67,3 +67,13 @@ class API(object):
         """
         if len(labels) > 0:
             return self._call("%s/labels" % issue_url, content=labels)
+
+    def get_repo_labels(self, labels_url=None):
+        """
+        Get labels for a repository.
+
+        Args:
+            labels_url: API endpoint for labels for this repository
+        """
+        return self._call(labels_url, method="GET")
+

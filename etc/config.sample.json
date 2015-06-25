@@ -1,9 +1,11 @@
 {
     "github": {
         "secret": "testing",
-        "api_token": "token for github account"
+        "api_token": "token for github account",
+        "repository": "organization/repository-name"
     },
     "labels": {
+        "autoload": false,
         "whitelist": [
             "from: suggestions", "from: support",
             "is: bug", "is: feature", "is: upkeep",

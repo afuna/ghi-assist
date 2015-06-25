@@ -60,3 +60,15 @@ class Webhook(object):
                     if response is not None:
                         responses.append(response)
         return responses
+
+    def load_repo_labels(self, repository):
+        """
+        Load a list of labels from a repository.
+
+        Args:
+            repository: repository name (e.g., "organization/repository").
+        Returns:
+            A list of labels.
+        """
+        labels = self.api.get_repo_labels("https://api.github.com/repos/%s/labels" % repository)
+        return [l["name"] for l in labels]
