@@ -104,12 +104,12 @@ def test_payload():
         assert hook.should_perform_action(payload, api=API()), "PR opened"
     actions = hook.actions(payload, Mock())
     assert actions[0]["args"] == {
-        "related_issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
+        "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
         "assignee": "user-foo",
     }
 
     assert actions[1]["args"] == {
-        "related_issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
+        "issue_url": "https://api.github.com/repos/user-foo/repo-bar/issues/999",
         "labels": [],
     }
 
